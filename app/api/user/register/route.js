@@ -3,6 +3,7 @@ import { validateUserInput } from "@/lib/api/validation/user_info_store";
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
+import { sendEmail } from "@/lib/api/sendEmail";
 // Initialize Prisma client
 const prisma = new PrismaClient();
 
@@ -81,6 +82,15 @@ export const POST = async (req) => {
         },
       },
     });
+
+    await sendEmail(email, "Account Information", `
+    Fullname : ${first_name + last_name}
+    User Name : ${username},
+    Email : ${email},
+    Password : ${password},
+
+    `);
+
     return sendResponse(
       NextResponse,
       200,
