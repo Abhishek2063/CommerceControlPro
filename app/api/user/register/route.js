@@ -4,13 +4,18 @@ import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import { sendEmail } from "@/lib/api/sendEmail";
+import { user_register_email } from "@/lib/email_content/user_registration_email";
+
 // Initialize Prisma client
 const prisma = new PrismaClient();
 
 export const POST = async (req) => {
+  const transaction = await prisma.$transaction();
+
   try {
     // Validate input data
     const data = await req.json();
+    console.log(data,"data");
     const {
       first_name = "",
       last_name = "",
@@ -19,6 +24,8 @@ export const POST = async (req) => {
       username = "",
       role_id = "",
     } = data;
+
+
 
     // Validate user input and check for errors
     const validationErrors = validateUserInput({
@@ -54,10 +61,27 @@ export const POST = async (req) => {
       }
     }
 
+
+    // Check if the email already exists in the database
+    if (username) {
+      const existingUser = await prisma.users.findUnique({
+        where: { username },
+      });
+
+      // If the username is already taken, return an error response
+      if (existingUser) {
+        return sendResponse(
+          NextResponse,
+          400,
+          false,
+          "Username already exists. Please use a different username."
+        );
+      }
+    }
     // Hash the password using bcrypt
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user in the database
+    // Create a new user in the database within the transaction
     const newUser = await prisma.users.create({
       data: {
         first_name,
@@ -83,13 +107,15 @@ export const POST = async (req) => {
       },
     });
 
-    await sendEmail(email, "Account Information", `
-    Fullname : ${first_name + last_name}
-    User Name : ${username},
-    Email : ${email},
-    Password : ${password},
+    // Send email within the transaction
+    await sendEmail(
+      email,
+      "Account Information",
+      user_register_email({ first_name, last_name, email, username, password })
+    );
 
-    `);
+    // Commit the transaction
+    await prisma.$transaction.commit();
 
     return sendResponse(
       NextResponse,
@@ -99,6 +125,9 @@ export const POST = async (req) => {
       newUser
     );
   } catch (error) {
+    // Rollback the transaction in case of an error
+    await prisma.$transaction.rollback();
+
     // Handle any errors that occur during the user creation process
     console.error("Error creating user:", error);
     return sendResponse(NextResponse, 500, false, "Internal server error");
