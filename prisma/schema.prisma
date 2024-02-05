@@ -1,0 +1,141 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model roles {
+  id         Int      @id @default(autoincrement())
+  role       String?  @db.VarChar(100)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  User users[]
+}
+
+model users {
+  id          Int           @id @default(autoincrement())
+  first_name  String?       @db.VarChar(50)
+  last_name   String?       @db.VarChar(50)
+  username    String        @unique @db.VarChar(255)
+  email       String        @unique @db.VarChar(255)
+  password    String        @db.VarChar(1000)
+  role        roles         @relation(fields: [role_id], references: [id])
+  role_id     Int
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  User_Images user_images[]
+  Token       token[]
+  orders      orders[]
+  carts       carts[]
+}
+
+model user_images {
+  id         Int      @id @default(autoincrement())
+  url        String?  @db.Text
+  user       users    @relation(fields: [user_id], references: [id])
+  user_id    Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model token {
+  id            Int      @id @default(autoincrement())
+  token         String?  @db.Text
+  refresh_token String?  @db.Text
+  user          users    @relation(fields: [user_id], references: [id])
+  user_id       Int
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+}
+
+model categories {
+  id         Int        @id @default(autoincrement())
+  name       String?    @unique @db.VarChar(255)
+  desciption String?    @db.Text
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  Products   products[]
+}
+
+model products {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique @db.VarChar(255)
+  description    String?          @db.Text
+  price          Decimal          @db.Decimal(10, 2)
+  stock_quantity Int
+  category       categories?      @relation(fields: [category_id], references: [id])
+  category_id    Int?
+  created_at     DateTime         @default(now())
+  updated_at     DateTime         @updatedAt
+  order_items    order_items[]
+  cart_items     cart_items[]
+  product_images product_images[]
+}
+
+model status {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique @db.VarChar(255)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  orders     orders[]
+}
+
+model orders {
+  id          Int           @id @default(autoincrement())
+  user        users         @relation(fields: [user_id], references: [id])
+  user_id     Int
+  status      status        @relation(fields: [status_id], references: [id])
+  status_id   Int
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  order_items order_items[]
+}
+
+model order_items {
+  id         Int      @id @default(autoincrement())
+  orders     orders   @relation(fields: [order_id], references: [id])
+  order_id   Int
+  products   products @relation(fields: [product_id], references: [id])
+  product_id Int
+  quantity   Int
+  unit_price Decimal  @db.Decimal(10, 2)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model carts {
+  id             Int          @id @default(autoincrement())
+  user           users        @relation(fields: [user_id], references: [id])
+  user_id        Int
+  payment_status Boolean      @default(false)
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
+  cart_items     cart_items[]
+}
+
+model cart_items {
+  id         Int      @id @default(autoincrement())
+  carts      carts    @relation(fields: [cart_id], references: [id])
+  cart_id    Int
+  products   products @relation(fields: [product_id], references: [id])
+  product_id Int
+  quantity   Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model product_images {
+  id         Int      @id @default(autoincrement())
+  url        String?  @db.Text
+  products   products @relation(fields: [product_id], references: [id])
+  product_id Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
