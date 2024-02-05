@@ -16,7 +16,8 @@ model roles {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  User users[]
+  User              users[]
+  module_permission module_permission[]
 }
 
 model users {
@@ -138,4 +139,22 @@ model product_images {
   product_id Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+}
+
+model module_names {
+  id                Int                 @id @default(autoincrement())
+  name              String              @unique @db.VarChar(255)
+  created_at        DateTime            @default(now())
+  updated_at        DateTime            @updatedAt
+  module_permission module_permission[]
+}
+
+model module_permission {
+  id              Int          @id @default(autoincrement())
+  role            roles        @relation(fields: [role_id], references: [id])
+  role_id         Int
+  module_names    module_names @relation(fields: [module_names_id], references: [id])
+  module_names_id Int
+  created_at      DateTime     @default(now())
+  updated_at      DateTime     @updatedAt
 }
