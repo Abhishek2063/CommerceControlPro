@@ -13,7 +13,6 @@ const seedRoles = async () => {
     data: rolesData,
   });
 
-  console.log('Roles seeded successfully.');
 };
 
 const seedStatus = async () => {
@@ -27,7 +26,6 @@ const seedStatus = async () => {
     data: statusData,
   });
 
-  console.log('Status seeded successfully.');
 };
 
 const main = async () => {
