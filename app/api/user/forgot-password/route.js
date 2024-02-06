@@ -1,8 +1,9 @@
 import { sendResponse } from "@/lib/api/responseHandler";
-import { validateUserInput } from "@/lib/api/validation/user_info_store";
+import { validateUserForgetPasswordInput } from "@/lib/api/validation/user_forget_password";
+import { sendEmailForForgetPassword } from "@/services/user/user_forget_password.service";
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
-import { createUserAndSendEmail } from "@/services/user/user_create.service";
+
 // Initialize Prisma client
 const prisma = new PrismaClient();
 
@@ -10,23 +11,11 @@ export const POST = async (req) => {
   try {
     // Validate input data
     const data = await req.json();
-    const {
-      first_name = "",
-      last_name = "",
-      email = "",
-      password = "",
-      username = "",
-      role_id = "",
-    } = data;
+    const { email = "" } = data;
 
     // Validate user input and check for errors
-    const validationErrors = validateUserInput({
-      first_name,
-      last_name,
+    const validationErrors = validateUserForgetPasswordInput({
       email,
-      password,
-      username,
-      role_id,
     });
 
     // If validation errors exist, return a response with the errors
@@ -36,26 +25,25 @@ export const POST = async (req) => {
       });
     }
 
-    const newUser = await createUserAndSendEmail(
-      first_name,
-      last_name,
+    const forget_password_email = await sendEmailForForgetPassword(
       email,
-      password,
-      username,
-      role_id,
       prisma
     );
 
-    if (newUser && newUser.success) {
+    if (forget_password_email && forget_password_email.success) {
       return sendResponse(
         NextResponse,
         200,
         true,
-        newUser.message,
-        newUser.data
+        forget_password_email.message
       );
     } else {
-      return sendResponse(NextResponse, 400, false, newUser.message);
+      return sendResponse(
+        NextResponse,
+        400,
+        false,
+        forget_password_email.message
+      );
     }
   } catch (error) {
     // Handle any errors that occur during the user creation process
