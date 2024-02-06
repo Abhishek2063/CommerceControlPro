@@ -1,14 +1,10 @@
-import { user_create_message_list } from "@/lib/api/message_list/user_message_list";
+import { reset_password_message_list } from "@/lib/api/message_list/user_message_list";
 import { sendEmail } from "@/lib/api/sendEmail";
-import { user_register_email } from "@/lib/email_content/user_registration_email";
+import { reset_password_email } from "@/lib/email_content/reset_password_email";
 import bcrypt from "bcrypt";
-export const createUserAndSendEmail = async (
-  first_name,
-  last_name,
+export const userUpdatePasswordAndSendEmail = async (
   email,
   password,
-  username,
-  role_id,
   prisma
 ) => {
   try {
@@ -20,24 +16,10 @@ export const createUserAndSendEmail = async (
         });
 
         // If the email is already taken, return an error response
-        if (existingUser) {
+        if (!existingUser) {
           return {
             success: false,
-            message: user_create_message_list.email_exist_error_message,
-          };
-        }
-      }
-
-      if (username) {
-        const existingUser = await tx.users.findUnique({
-          where: { username },
-        });
-
-        // If the username is already taken, return an error response
-        if (existingUser) {
-          return {
-            success: false,
-            message: user_create_message_list.username_exist_error_message,
+            message: reset_password_message_list.email_not_exist_error,
           };
         }
       }
@@ -46,14 +28,12 @@ export const createUserAndSendEmail = async (
       const hashedPassword = await bcrypt.hash(password, 10);
 
       // Create a new user in the database
-      const newUser = await tx.users.create({
-        data: {
-          first_name,
-          last_name,
+      const updateUserPassword = await tx.users.update({
+        where: {
           email,
+        },
+        data: {
           password: hashedPassword,
-          username,
-          role_id,
         },
         select: {
           id: true,
@@ -73,25 +53,25 @@ export const createUserAndSendEmail = async (
 
       await sendEmail(
         email,
-        user_create_message_list.user_create_email_subject,
-        user_register_email({
-          first_name,
-          last_name,
+        reset_password_message_list.reset_password_email_subject,
+        reset_password_email({
+          first_name: updateUserPassword.first_name,
+          last_name: updateUserPassword.last_name,
           email,
-          username,
+          username: updateUserPassword.username,
           password,
         })
       );
       return {
         success: true,
-        message: user_create_message_list.success_user_create_message,
-        data: newUser,
+        message: reset_password_message_list.reset_password_success_message,
+        data: updateUserPassword,
       };
     });
   } catch (err) {
     return {
       success: false,
-      message: user_create_message_list.internal_server_error,
+      message: reset_password_message_list.internal_server_error,
       data: err,
     };
   }

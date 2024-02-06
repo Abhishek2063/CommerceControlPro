@@ -1,6 +1,7 @@
 import { sendEmail } from "@/lib/api/sendEmail";
 import { forget_password } from "@/lib/email_content/forget_password_email";
 import { getCurrentConfig } from "@/config/config";
+import { forget_password_message_list } from "@/lib/api/message_list/user_message_list";
 export const sendEmailForForgetPassword = async (email, prisma) => {
   try {
     const existingUser = await prisma.users.findUnique({
@@ -12,7 +13,7 @@ export const sendEmailForForgetPassword = async (email, prisma) => {
       if (!existingUser) {
         return {
           success: false,
-          message: "Email is not exists. Please use a correct email address.",
+          message: forget_password_message_list.email_not_exist_error,
         };
       }
     }
@@ -21,17 +22,17 @@ export const sendEmailForForgetPassword = async (email, prisma) => {
 
     await sendEmail(
       email,
-      "Forget Password Verification",
-      forget_password(existingUser,app_url)
+      forget_password_message_list.send_email_subject,
+      forget_password(existingUser, app_url)
     );
     return {
       success: true,
-      message: "Email send to your email address for verification.",
+      message: forget_password_message_list.success_forget_password,
     };
   } catch (err) {
     return {
       success: false,
-      message: "Internal server error",
+      message: forget_password_message_list.internal_server_error,
       data: err,
     };
   }
