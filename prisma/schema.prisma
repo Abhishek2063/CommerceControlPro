@@ -2,12 +2,15 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  schemas   = ["ecommerce"]
 }
 
 model roles {
@@ -18,6 +21,8 @@ model roles {
 
   User              users[]
   module_permission module_permission[]
+
+  @@schema("ecommerce")
 }
 
 model users {
@@ -35,6 +40,8 @@ model users {
   Token       token[]
   orders      orders[]
   carts       carts[]
+
+  @@schema("ecommerce")
 }
 
 model user_images {
@@ -44,6 +51,8 @@ model user_images {
   user_id    Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+
+  @@schema("ecommerce")
 }
 
 model token {
@@ -54,6 +63,8 @@ model token {
   user_id       Int
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
+
+  @@schema("ecommerce")
 }
 
 model categories {
@@ -63,6 +74,8 @@ model categories {
   created_at  DateTime   @default(now())
   updated_at  DateTime   @updatedAt
   Products    products[]
+
+  @@schema("ecommerce")
 }
 
 model products {
@@ -78,6 +91,8 @@ model products {
   order_items    order_items[]
   cart_items     cart_items[]
   product_images product_images[]
+
+  @@schema("ecommerce")
 }
 
 model status {
@@ -86,6 +101,8 @@ model status {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   orders     orders[]
+
+  @@schema("ecommerce")
 }
 
 model orders {
@@ -97,6 +114,8 @@ model orders {
   created_at  DateTime      @default(now())
   updated_at  DateTime      @updatedAt
   order_items order_items[]
+
+  @@schema("ecommerce")
 }
 
 model order_items {
@@ -109,6 +128,8 @@ model order_items {
   unit_price Decimal  @db.Decimal(10, 2)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+
+  @@schema("ecommerce")
 }
 
 model carts {
@@ -119,6 +140,8 @@ model carts {
   created_at     DateTime     @default(now())
   updated_at     DateTime     @updatedAt
   cart_items     cart_items[]
+
+  @@schema("ecommerce")
 }
 
 model cart_items {
@@ -130,6 +153,8 @@ model cart_items {
   quantity   Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+
+  @@schema("ecommerce")
 }
 
 model product_images {
@@ -139,6 +164,8 @@ model product_images {
   product_id Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+
+  @@schema("ecommerce")
 }
 
 model module_names {
@@ -147,6 +174,8 @@ model module_names {
   created_at        DateTime            @default(now())
   updated_at        DateTime            @updatedAt
   module_permission module_permission[]
+
+  @@schema("ecommerce")
 }
 
 model module_permission {
@@ -157,4 +186,6 @@ model module_permission {
   module_names_id Int
   created_at      DateTime     @default(now())
   updated_at      DateTime     @updatedAt
+
+  @@schema("ecommerce")
 }
