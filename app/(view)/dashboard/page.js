@@ -1,9 +1,25 @@
-import React from 'react'
-
+"use client";
+import React, { useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { getUserDetails, setUserDetails } from "@/storage/user";
+import { getToken, setToken } from "@/storage/token";
 const page = () => {
-  return (
-    <div>page</div>
-  )
-}
+  const { data: session, status, update } = useSession();
 
-export default page
+  useEffect(() => {
+    const tokenDetails = getToken()
+    const userDetails = getUserDetails()
+    if (!tokenDetails && !userDetails) {
+      if (session.token) {
+        const userData = session.token.token.user.data.user;
+        const tokenData = session.token.token.user.data.token.token;
+        setUserDetails(userData);
+        setToken(tokenData);
+      }
+    }
+  },[session]);
+
+  return <div>page</div>;
+};
+
+export default page;

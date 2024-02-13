@@ -74,7 +74,15 @@ const authOptions = {
       },
     }),
   ],
-  callbacks: {},
+  callbacks: {
+    async session({ session, user, token }) {
+      return {session, user, token};
+    },
+    async jwt({ token, user, account, profile, isNewUser }) {
+    
+      return {token, user, account};
+    },
+  },
   session: {
     strategy: "jwt", // allow us to track user through json web tokens
   },

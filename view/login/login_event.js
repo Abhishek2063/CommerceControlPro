@@ -60,32 +60,31 @@ export const handleSubmit = async (
   event.preventDefault();
   const isFormValid = validateForm(state, setErrorState);
   if (isFormValid) {
-   
-   await signIn("credentials", {
+    await signIn("credentials", {
       email: state.email,
       password: state.password,
       redirect: false,
     })
-    .then((response) => {
-      if (response.data.success) {
-        setState({
-          email: "",
-          password: "",
-        });
-        setErrorState({
-          email: "",
-          password: "",
-        });
-        router.push(private_routes.dashboard);
-      } else {
-        message.error(response.data.message);
-      }
-    })
-    .catch((error) => {
-      message.error(error.response.data.message);
-    });
-  }
-  else {
+      .then((response) => {
+        if (response.ok) {
+          setState({
+            email: "",
+            password: "",
+          });
+          setErrorState({
+            email: "",
+            password: "",
+          });
+          router.push(private_routes.dashboard);
+          message.success("Login Successful");
+        } else {
+          message.error(response.error);
+        }
+      })
+      .catch((error) => {
+        message.error(error.response.error);
+      });
+  } else {
     message.error("Fix the errors");
   }
 };
