@@ -3,3 +3,7 @@ export const public_routes = {
   login: "/login",
   register: "/register",
 };
+
+export const private_routes = {
+  dashboard: "/dashboard",
+};

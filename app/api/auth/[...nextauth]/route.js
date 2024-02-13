@@ -5,6 +5,8 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { NextResponse } from "next/server";
 import { user_login_message_list } from "@/lib/api/message_list/user_message_list";
 import { loginUserServices } from "@/services/user/user_login.service";
+import { setUserDetails } from "@/storage/user";
+import { setToken } from "@/storage/token";
 
 const authOptions = {
   pages: {
@@ -16,13 +18,11 @@ const authOptions = {
     CredentialsProvider({
       name: "credentails",
       credentials: {
-        email : {},
-        password  : {}
+        email: {},
+        password: {},
       },
       async authorize(credentials) {
         const { email = "", password = "" } = credentials;
-        console.log(email, "email");
-        console.log(password, "password");
 
         try {
           // Validate user input and check for errors
@@ -33,15 +33,14 @@ const authOptions = {
 
           // If validation errors exist, return a response with the errors
           if (validationErrors.length > 0) {
-            return sendResponse(
-              NextResponse,
-              400,
-              false,
-              user_login_message_list.validation_message,
-              {
+            return {
+              statusCode: 400,
+              success: false,
+              message: user_login_message_list.validation_message,
+              data: {
                 errors: validationErrors,
-              }
-            );
+              },
+            };
           }
 
           const loginUserService = await loginUserServices({
@@ -50,28 +49,27 @@ const authOptions = {
           });
 
           if (loginUserService && loginUserService.success) {
-            return sendResponse(
-              NextResponse,
-              200,
-              true,
-              loginUserService.message,
-              loginUserService.data
-            );
+            return {
+              statusCode: 200,
+              success: true,
+              message: loginUserService.message,
+              data: loginUserService.data,
+            };
           } else {
-            return sendResponse(
-              NextResponse,
-              400,
-              false,
-              loginUserService.message
-            );
+            return {
+              statusCode: 400,
+              success: false,
+              message: loginUserService.message,
+              data: null,
+            };
           }
         } catch (error) {
-          return sendResponse(
-            NextResponse,
-            400,
-            false,
-            user_login_message_list.internal_server_error
-          );
+          return {
+            statusCode: 400,
+            success: false,
+            message: user_login_message_list.internal_server_error,
+            data: null,
+          };
         }
       },
     }),

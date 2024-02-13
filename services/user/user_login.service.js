@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken";
 // Initialize Prisma client
 const prisma = new PrismaClient();
 
-export const loginUserServices = async (email, password) => {
+export const loginUserServices = async ({ email, password }) => {
   try {
     let existingUser;
     // Check if the email already exists in the database
@@ -31,16 +31,17 @@ export const loginUserServices = async (email, password) => {
         },
       });
 
-      // If the email is already taken, return an error response
+      // If the email is not found, return an error response
       if (!existingUser) {
         return {
           success: false,
-          message: user_login_message_list.email_exist_error_message,
+          message: user_login_message_list.email_not_found_error_message,
         };
       }
     }
 
-    if (password) {
+    // If there's an existing user, proceed with password validation
+    if (existingUser && password) {
       const passwordsMatch = await bcrypt.compare(
         password,
         existingUser.password
@@ -55,14 +56,11 @@ export const loginUserServices = async (email, password) => {
 
     // Generate token using user data
     const token = jwt.sign(
-      existingUser,
-      process.env.NEXT_PUBLIC_JWT_SECRET, // Your JWT secret key
-      {
-        expiresIn: "1h", // Token expires in 1 hour
-      }
+      { id: existingUser.id },
+      process.env.NEXT_PUBLIC_JWT_SECRET,
     );
 
-    const token_create = prisma.token.create({
+    const token_create = await prisma.token.create({
       data: {
         token: token,
         refresh_token: token,
@@ -73,7 +71,10 @@ export const loginUserServices = async (email, password) => {
     return {
       success: true,
       message: user_login_message_list.login_success_message,
-      token: token_create,
+      data: {
+        user: existingUser,
+        token: token_create,
+      },
     };
   } catch (error) {
     // Handle any errors that occur during the user creation process
@@ -87,3 +88,4 @@ export const loginUserServices = async (email, password) => {
     await prisma.$disconnect();
   }
 };
+
