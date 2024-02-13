@@ -4,14 +4,12 @@ import { public_routes } from "@/utils/app_routes";
 import ResetPasswordForm from "@/view/reset_password/reset_password_form";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState ,useEffect} from "react";
 
 export default function ResetPassword() {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const emailParams = searchParams.get('email')
   const [resetPassword, setResetPassword] = useState({
-    email: emailParams,
+    email: "",
     password: "",
     confirm_password: "",
   });
@@ -20,6 +18,17 @@ export default function ResetPassword() {
     password: "",
     confirm_password: "",
   });
+
+    useEffect(() => {
+    const searchParams = useSearchParams()
+  const emailParams = searchParams.get('email')
+    if (emailParams) {
+      setResetPassword((prevState) => ({
+        ...prevState,
+        email:emailParams,
+      }));
+    }
+  }, []);
 
   return (
     <div
