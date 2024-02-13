@@ -2,7 +2,7 @@
 
 const config = {
   localhost: {
-    appUrl: process.env.NEXT_PUBLIC_LOCAL_APP_URL || "http://localhost:3001",
+    appUrl: process.env.NEXT_PUBLIC_LOCAL_APP_URL || "http://localhost:3000",
   },
   production: {
     appUrl:

@@ -15,7 +15,10 @@ const authOptions = {
   providers: [
     CredentialsProvider({
       name: "credentails",
-      credentials: {},
+      credentials: {
+        email : {},
+        password  : {}
+      },
       async authorize(credentials) {
         const { email = "", password = "" } = credentials;
         console.log(email, "email");
