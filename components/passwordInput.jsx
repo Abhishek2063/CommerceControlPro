@@ -1,10 +1,9 @@
-"use client";
 import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 
 const PasswordInput = (props) => {
   const [isVisible, setIsVisible] = useState(false);
-  const isError = props.error ? "border-red-500" : "";
+  const isError = props.error ? "border-red-500 hover:border-red-700" : "border-gray-300 hover:border-gray-700";
   const labelClassName = props.isRequired
     ? "block text-sm font-medium "
     : "block text-sm font-medium ";
@@ -21,7 +20,7 @@ const PasswordInput = (props) => {
           id={props.name}
           name={props.name}
           value={props.value}
-          className={`p-2 w-full border ${isError} rounded-2xl inputTextField bg-transparent border-gray-900 pr-11`}
+          className={`p-2 w-full border ${isError} inputTextField bg-transparent pr-11`}
           onChange={props.handleChange}
           onBlur={props.handleChange}
           onKeyDown={props.onKeyDown}
@@ -36,11 +35,10 @@ const PasswordInput = (props) => {
         </button>
       </div>
       {props.error && (
-        <p className="text-red-600 max-w-xs">{props.error}</p> // Set max-width for the error message container
+        <p className="text-red-600 max-w-xs">{props.error}</p>
       )}
     </div>
   );
 };
-
 
 export default PasswordInput;

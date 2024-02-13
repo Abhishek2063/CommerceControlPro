@@ -1,5 +1,5 @@
 const Input = (props) => {
-  const isError = props.error ? "border-red-500" : "";
+  const isError = props.error ? "border-red-500 hover:border-red-700" : "border-gray-300 hover:border-gray-700";
   const labelClassName = props.isRequired
     ? "block text-sm font-medium "
     : "block text-sm font-medium ";
@@ -16,7 +16,7 @@ const Input = (props) => {
             id={props.name}
             name={props.name}
             value={props.value}
-            className={`p-2 w-full border ${isError} rounded-2xl inputTextField bg-transparent border-gray-900`}
+            className={`p-2 w-full border ${isError} inputTextField bg-transparent `}
             onChange={props.handleChange}
             onBlur={props.handleChange}
             onKeyDown={props.onKeyDown}
