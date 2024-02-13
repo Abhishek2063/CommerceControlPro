@@ -1,7 +1,15 @@
-import { reset_password_message_list } from "@/lib/api/message_list/user_message_list";
-import { sendEmail } from "@/lib/api/sendEmail";
-import { reset_password_email } from "@/lib/email_content/reset_password_email";
-import bcrypt from "bcrypt";
+import { reset_password_message_list } from "@/lib/api/message_list/user_message_list"; // Import message list for reset password
+import { sendEmail } from "@/lib/api/sendEmail"; // Import sendEmail function for sending emails
+import { reset_password_email } from "@/lib/email_content/reset_password_email"; // Import reset password email template
+import bcrypt from "bcrypt"; // Import bcrypt for password hashing
+
+/**
+ * Service function for updating user password and sending reset password email.
+ * @param {string} email - The email of the user.
+ * @param {string} password - The new password for the user.
+ * @param {PrismaClient} prisma - The Prisma client instance.
+ * @returns {Object} - Object containing success status, message, and data.
+ */
 export const userUpdatePasswordAndSendEmail = async (
   email,
   password,
@@ -15,7 +23,7 @@ export const userUpdatePasswordAndSendEmail = async (
           where: { email },
         });
 
-        // If the email is already taken, return an error response
+        // If the email is not found, return an error response
         if (!existingUser) {
           return {
             success: false,
@@ -24,10 +32,10 @@ export const userUpdatePasswordAndSendEmail = async (
         }
       }
 
-      // Hash the password using bcrypt
+      // Hash the new password using bcrypt
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Create a new user in the database
+      // Update the user's password in the database
       const updateUserPassword = await tx.users.update({
         where: {
           email,
@@ -51,6 +59,7 @@ export const userUpdatePasswordAndSendEmail = async (
         },
       });
 
+      // Send reset password email to the user
       await sendEmail(
         email,
         reset_password_message_list.reset_password_email_subject,
@@ -62,6 +71,8 @@ export const userUpdatePasswordAndSendEmail = async (
           password,
         })
       );
+
+      // Return success response
       return {
         success: true,
         message: reset_password_message_list.reset_password_success_message,
@@ -69,6 +80,7 @@ export const userUpdatePasswordAndSendEmail = async (
       };
     });
   } catch (err) {
+    // Handle any errors that occur during the update password process
     return {
       success: false,
       message: reset_password_message_list.internal_server_error,

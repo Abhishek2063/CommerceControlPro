@@ -1,12 +1,14 @@
-import { sendResponse } from "@/lib/api/responseHandler";
-import { validateUserInput } from "@/lib/api/validation/user_info_store";
-import { PrismaClient } from "@prisma/client";
-import { NextResponse } from "next/server";
-import { createUserAndSendEmail } from "@/services/user/user_create.service";
-import { user_create_message_list } from "@/lib/api/message_list/user_message_list";
+import { sendResponse } from "@/lib/api/responseHandler"; // Import response handler utility
+import { validateUserInput } from "@/lib/api/validation/user_info_store"; // Import validation function for user information
+import { PrismaClient } from "@prisma/client"; // Import Prisma client for database interaction
+import { NextResponse } from "next/server"; // Import Next.js server response utility
+import { createUserAndSendEmail } from "@/services/user/user_create.service"; // Import service function for creating user and sending email
+import { user_create_message_list } from "@/lib/api/message_list/user_message_list"; // Import message list for user creation
+
 // Initialize Prisma client
 const prisma = new PrismaClient();
 
+// Handler function for handling HTTP POST request to create a user
 export const POST = async (req) => {
   try {
     // Validate input data
@@ -43,6 +45,7 @@ export const POST = async (req) => {
       );
     }
 
+    // Create user and send email
     const newUser = await createUserAndSendEmail(
       first_name,
       last_name,
@@ -53,6 +56,7 @@ export const POST = async (req) => {
       prisma
     );
 
+    // Return response based on the result of user creation
     if (newUser && newUser.success) {
       return sendResponse(
         NextResponse,

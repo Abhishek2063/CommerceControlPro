@@ -8,19 +8,24 @@ import { loginUserServices } from "@/services/user/user_login.service";
 import { setUserDetails } from "@/storage/user";
 import { setToken } from "@/storage/token";
 
+// Configuration options for NextAuth
 const authOptions = {
+  // Define custom pages for authentication flows
   pages: {
-    signIn: "/auth/login",
-    newUser: "/auth/register",
+    signIn: "/auth/login",   // Page for signing in
+    newUser: "/auth/register",  // Page for registering a new user
   },
 
+  // Configure authentication providers
   providers: [
+    // Use CredentialsProvider for email/password authentication
     CredentialsProvider({
-      name: "credentails",
+      name: "credentials",   // Provider name
       credentials: {
-        email: {},
-        password: {},
+        email: {},    // Credential field for email
+        password: {}, // Credential field for password
       },
+      // Authorization function for handling login attempts
       async authorize(credentials) {
         const { email = "", password = "" } = credentials;
 
@@ -43,11 +48,13 @@ const authOptions = {
             };
           }
 
+          // Attempt to authenticate user via provided credentials
           const loginUserService = await loginUserServices({
             email,
             password,
           });
 
+          // Return response based on authentication result
           if (loginUserService && loginUserService.success) {
             return {
               statusCode: 200,
@@ -64,6 +71,7 @@ const authOptions = {
             };
           }
         } catch (error) {
+          // Handle internal server error during authentication
           return {
             statusCode: 400,
             success: false,
@@ -74,20 +82,28 @@ const authOptions = {
       },
     }),
   ],
+
+  // Define callbacks for session and JWT handling
   callbacks: {
+    // Callback for handling session creation
     async session({ session, user, token }) {
-      return {session, user, token};
+      return { session, user, token }; // Return session data
     },
+    // Callback for handling JWT creation
     async jwt({ token, user, account, profile, isNewUser }) {
-    
-      return {token, user, account};
+      return { token, user, account }; // Return JWT data
     },
   },
+
+  // Configuration for session handling
   session: {
-    strategy: "jwt", // allow us to track user through json web tokens
+    strategy: "jwt", // Use JSON Web Tokens (JWT) for session management
   },
-  secret: process.env.NEXTAUTH_SECRET, // secret is mandatory in production
+
+  // Secret key for encrypting session data (mandatory in production)
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
+// Create NextAuth handler with defined options
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };

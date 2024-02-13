@@ -1,16 +1,22 @@
-import { user_login_message_list } from "@/lib/api/message_list/user_message_list";
-import { sendResponse } from "@/lib/api/responseHandler";
-import { PrismaClient } from "@prisma/client";
-import { NextResponse } from "next/server";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { user_login_message_list } from "@/lib/api/message_list/user_message_list"; // Import message list for user login
+import { sendResponse } from "@/lib/api/responseHandler"; // Import sendResponse function for sending responses
+import { PrismaClient } from "@prisma/client"; // Import Prisma client
+import { NextResponse } from "next/server"; // Import NextResponse for sending responses
+import bcrypt from "bcrypt"; // Import bcrypt for password hashing and comparison
+import jwt from "jsonwebtoken"; // Import jwt for token generation
 
 // Initialize Prisma client
 const prisma = new PrismaClient();
 
+/**
+ * Service function for user login.
+ * @param {Object} credentials - User credentials including email and password.
+ * @returns {Object} - Object containing success status, message, and data.
+ */
 export const loginUserServices = async ({ email, password }) => {
   try {
     let existingUser;
+
     // Check if the email already exists in the database
     if (email) {
       existingUser = await prisma.users.findUnique({
@@ -98,8 +104,8 @@ export const loginUserServices = async ({ email, password }) => {
       },
     };
   } catch (error) {
-    // Handle any errors that occur during the user creation process
-    console.error("Error creating user:", error);
+    // Handle any errors that occur during user login
+    console.error("Error logging in user:", error);
     return {
       success: false,
       message: user_login_message_list.internal_server_error,
