@@ -57,16 +57,37 @@ export const loginUserServices = async ({ email, password }) => {
     // Generate token using user data
     const token = jwt.sign(
       { id: existingUser.id },
-      process.env.NEXT_PUBLIC_JWT_SECRET,
+      process.env.NEXT_PUBLIC_JWT_SECRET
     );
 
-    const token_create = await prisma.token.create({
-      data: {
-        token: token,
-        refresh_token: token,
+    // Check if a token record for the user already exists
+    const existingToken = await prisma.token.findFirst({
+      where: {
         user_id: existingUser.id,
       },
     });
+
+    let token_create;
+
+    if (existingToken) {
+      // Update the existing token record
+      token_create = await prisma.token.update({
+        where: { id: existingToken.id },
+        data: {
+          token: token,
+          refresh_token: token,
+        },
+      });
+    } else {
+      // Create a new token record
+      token_create = await prisma.token.create({
+        data: {
+          token: token,
+          refresh_token: token,
+          user_id: existingUser.id,
+        },
+      });
+    }
 
     return {
       success: true,
@@ -88,4 +109,3 @@ export const loginUserServices = async ({ email, password }) => {
     await prisma.$disconnect();
   }
 };
-
