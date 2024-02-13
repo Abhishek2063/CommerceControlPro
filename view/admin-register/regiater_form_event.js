@@ -67,7 +67,7 @@ export const handleSubmit = async (
       email: state.email,
       password: state.password,
       username: state.username,
-      role_id: 2,
+      role_id: 1,
     };
     await post(REGISTER_ACCOUNT, newData)
       .then((response) => {

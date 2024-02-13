@@ -1,5 +1,5 @@
 import { post } from "@/utils/api";
-import { REGISTER_ACCOUNT } from "@/utils/api_routes";
+import { FORGET_PASSWORD_ACCOUNT } from "@/utils/api_routes";
 import { public_routes } from "@/utils/app_routes";
 import { message } from "antd";
 
@@ -62,34 +62,18 @@ export const handleSubmit = async (
   const isFormValid = validateForm(state, setErrorState);
   if (isFormValid) {
     const newData = {
-      first_name: state.first_name,
-      last_name: state.last_name,
       email: state.email,
-      password: state.password,
-      username: state.username,
-      role_id: 2,
     };
-    await post(REGISTER_ACCOUNT, newData)
+    await post(FORGET_PASSWORD_ACCOUNT, newData)
       .then((response) => {
         if (response.data.success) {
           setState({
-            first_name: "",
-            last_name: "",
             email: "",
-            password: "",
-            confirm_password: "",
-            username: "",
           });
           setErrorState({
-            first_name: "",
-            last_name: "",
             email: "",
-            password: "",
-            confirm_password: "",
-            username: "",
           });
           message.success(response.data.message);
-          router.push(public_routes.login);
         } else {
           message.error(response.data.message);
         }
@@ -109,26 +93,13 @@ export const validateForm = (state, setErrorState) => {
       let type = "";
       let maxLength = null;
       let minLength = null;
-      if (key === "first_name" || key === "last_name") {
-        type = "alphabetics";
-        maxLength = 50;
-        minLength = 2;
-      }
+
       if (key === "email") {
         type = "email";
         maxLength = 255;
         minLength = 8;
       }
-      if (key === "username") {
-        type = "string";
-        maxLength = 50;
-        minLength = 2;
-      }
-      if (key === "password" || key === "confirm_password") {
-        type = "password";
-        maxLength = 50;
-        minLength = 8;
-      }
+
       const error = checkValidation(
         key,
         state[key],

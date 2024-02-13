@@ -1,13 +1,13 @@
-"use client";
-import NavigationButton from "@/components/NavigationButton";
-import { public_routes } from "@/utils/app_routes";
-import LoginForm from "@/view/login/loginForm";
-import Image from "next/image";
+"use client"
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Image from "next/image";
+import LoginForm from "@/view/login/loginForm";
+import NavigationButton from "@/components/NavigationButton"; // Import NavigationButton component
+import { public_routes } from "@/utils/app_routes";
 
 export default function Login() {
-  const router = useRouter()
+  const router = useRouter();
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -17,11 +17,13 @@ export default function Login() {
     password: "",
   });
 
+  const handleForgetPassword = () => {
+    // Navigate to the forget password page
+    router.push(public_routes.forgetPassword);
+  };
+
   return (
-    <div
-      className="flex flex-col justify-center items-center h-screen bg-cover bg-center bg-opacity-50"
-      style={{ backgroundImage: "url('/images/background.webp')" }}
-    >
+    <div className="flex flex-col justify-center items-center h-screen bg-cover bg-center bg-opacity-50" style={{ backgroundImage: "url('/images/background.webp')" }}>
       <div className="bg-white p-8 rounded-lg shadow-lg flex flex-col items-center">
         <div className="rounded-full overflow-hidden mb-8">
           <Image
@@ -42,13 +44,20 @@ export default function Login() {
           router={router}
         />
         <div className="mt-3 flex items-center justify-between inline-block align-baseline text-sm font-bold">
-          Don't have an account?
+          <div>Don't have an account?</div>
           <NavigationButton
             class="text-blue-500 hover:text-blue-800"
-            text="Sign In"
+            text="Sign Up"
             navigate_path={public_routes.register}
           />
         </div>
+        {/* Forget Password button */}
+        <NavigationButton
+            class="text-sm text-blue-500 hover:underline mt-2"
+            text=" Forget Password?"
+            navigate_path={public_routes.forget_password}
+          />
+       
       </div>
     </div>
   );

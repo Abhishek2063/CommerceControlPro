@@ -1,5 +1,5 @@
 import { post } from "@/utils/api";
-import { REGISTER_ACCOUNT } from "@/utils/api_routes";
+import { REGISTER_ACCOUNT, RESET_PASSWORD } from "@/utils/api_routes";
 import { public_routes } from "@/utils/app_routes";
 import { message } from "antd";
 
@@ -62,31 +62,21 @@ export const handleSubmit = async (
   const isFormValid = validateForm(state, setErrorState);
   if (isFormValid) {
     const newData = {
-      first_name: state.first_name,
-      last_name: state.last_name,
       email: state.email,
       password: state.password,
-      username: state.username,
-      role_id: 2,
     };
-    await post(REGISTER_ACCOUNT, newData)
+    await post(RESET_PASSWORD, newData)
       .then((response) => {
         if (response.data.success) {
           setState({
-            first_name: "",
-            last_name: "",
             email: "",
             password: "",
             confirm_password: "",
-            username: "",
           });
           setErrorState({
-            first_name: "",
-            last_name: "",
             email: "",
             password: "",
             confirm_password: "",
-            username: "",
           });
           message.success(response.data.message);
           router.push(public_routes.login);

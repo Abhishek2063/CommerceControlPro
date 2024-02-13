@@ -22,9 +22,12 @@ const Input = (props) => {
             onKeyDown={props.onKeyDown}
             placeholder={props.placeholder}
             maxLength={props.maxLength}
+            disabled={props.disabled || false}
           />
         </div>
-        {props.error && <p className="text-red-600">{props.error}</p>}
+        {props.error && (
+          <p className="text-red-600 max-w-xs">{props.error}</p> // Set max-width for the error message container
+        )}
       </div>
     </>
   );

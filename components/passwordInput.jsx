@@ -35,9 +35,12 @@ const PasswordInput = (props) => {
           {isVisible ? <EyeOutlined /> : <EyeInvisibleOutlined />}
         </button>
       </div>
-      {props.error && <p className="text-red-600">{props.error}</p>}
+      {props.error && (
+        <p className="text-red-600 max-w-xs">{props.error}</p> // Set max-width for the error message container
+      )}
     </div>
   );
 };
+
 
 export default PasswordInput;
