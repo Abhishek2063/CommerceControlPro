@@ -57,12 +57,12 @@ model token {
 }
 
 model categories {
-  id         Int        @id @default(autoincrement())
-  name       String?    @unique @db.VarChar(255)
-  desciption String?    @db.Text
-  created_at DateTime   @default(now())
-  updated_at DateTime   @updatedAt
-  Products   products[]
+  id          Int        @id @default(autoincrement())
+  name        String?    @unique @db.VarChar(255)
+  description String?    @db.Text
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+  Products    products[]
 }
 
 model products {
