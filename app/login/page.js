@@ -5,6 +5,7 @@ import Image from "next/image";
 import LoginForm from "@/view/login/loginForm";
 import NavigationButton from "@/components/NavigationButton"; // Import NavigationButton component
 import { public_routes } from "@/utils/app_routes";
+import Loader from "@/components/Loader";
 
 export default function Login() {
   const router = useRouter();
@@ -17,12 +18,12 @@ export default function Login() {
     password: "",
   });
 
-  const handleForgetPassword = () => {
-    // Navigate to the forget password page
-    router.push(public_routes.forgetPassword);
-  };
+  const [isLoader, setLoader] = useState(false);
+
 
   return (
+    <>
+       {isLoader && <Loader />}
     <div className="flex flex-col justify-center items-center h-screen bg-cover bg-center bg-opacity-50" style={{ backgroundImage: "url('/images/background.webp')" }}>
       <div className="bg-white p-8 rounded-lg shadow-lg flex flex-col items-center">
         <div className="rounded-full overflow-hidden mb-8">
@@ -42,6 +43,7 @@ export default function Login() {
           errorState={loginErrorData}
           setErrorState={setLoginErrorData}
           router={router}
+          setLoader={setLoader}
         />
         <div className="mt-3 flex items-center justify-between inline-block align-baseline text-sm font-bold">
           <div>Don't have an account?</div>
@@ -60,5 +62,6 @@ export default function Login() {
        
       </div>
     </div>
+    </>
   );
 }

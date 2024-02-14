@@ -55,11 +55,13 @@ export const handleSubmit = async (
   setState,
   errorState,
   setErrorState,
-  router
+  router,
+  setLoader
 ) => {
   event.preventDefault();
   const isFormValid = validateForm(state, setErrorState);
   if (isFormValid) {
+    setLoader(true);
     await signIn("credentials", {
       email: state.email,
       password: state.password,
@@ -75,13 +77,16 @@ export const handleSubmit = async (
             email: "",
             password: "",
           });
+          setLoader(false);
           router.push(private_routes.dashboard);
           message.success("Login Successful");
         } else {
+          setLoader(false);
           message.error(response.error);
         }
       })
       .catch((error) => {
+        setLoader(false);
         message.error(error.response.error);
       });
   } else {
@@ -132,9 +137,18 @@ export const handleKeyDown = (
   setState,
   errorState,
   setErrorState,
-  router
+  router,
+  setLoader
 ) => {
   if (event.key === "Enter" || event.key === "enter") {
-    handleSubmit(event, state, setState, errorState, setErrorState, router);
+    handleSubmit(
+      event,
+      state,
+      setState,
+      errorState,
+      setErrorState,
+      router,
+      setLoader
+    );
   }
 };

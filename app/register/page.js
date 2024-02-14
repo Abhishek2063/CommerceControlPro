@@ -1,4 +1,5 @@
 "use client";
+import Loader from "@/components/Loader";
 import NavigationButton from "@/components/NavigationButton";
 import { public_routes } from "@/utils/app_routes";
 import RegistartionForm from "@/view/register/register_form";
@@ -24,8 +25,10 @@ export default function Register() {
     confirm_password: "",
     username: "",
   });
-
+  const [isLoader, setLoader] = useState(false);
   return (
+    <>
+      {isLoader && <Loader />}
     <div
       className="flex flex-col justify-center items-center h-screen bg-cover bg-center bg-opacity-50"
       style={{ backgroundImage: "url('/images/background.webp')" }}
@@ -48,6 +51,7 @@ export default function Register() {
           errorState={registerDataError}
           setErrorState={setRegisterDataError}
           router={router}
+          setLoader={setLoader}
         />
         <div className="mt-3 flex items-center justify-between inline-block align-baseline text-sm font-bold">
           Already have an account?
@@ -59,5 +63,6 @@ export default function Register() {
         </div>
       </div>
     </div>
+    </>
   );
 }

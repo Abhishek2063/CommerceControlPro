@@ -35,7 +35,8 @@ const LoginForm = (props) => {
             props.setState,
             props.errorState,
             props.setErrorState,
-            props.router
+            props.router,
+            props.setLoader
           )
         }
       />
@@ -67,7 +68,8 @@ const LoginForm = (props) => {
             props.setState,
             props.errorState,
             props.setErrorState,
-            props.router
+            props.router,
+            props.setLoader
           )
         }
       />
@@ -82,7 +84,8 @@ const LoginForm = (props) => {
             props.setState,
             props.errorState,
             props.setErrorState,
-            props.router
+            props.router,
+            props.setLoader
           )
         }
       />

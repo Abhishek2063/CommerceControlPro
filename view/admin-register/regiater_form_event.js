@@ -56,11 +56,13 @@ export const handleSubmit = async (
   setState,
   errorState,
   setErrorState,
-  router
+  router,
+  setLoader
 ) => {
   event.preventDefault();
   const isFormValid = validateForm(state, setErrorState);
   if (isFormValid) {
+    setLoader(true);
     const newData = {
       first_name: state.first_name,
       last_name: state.last_name,
@@ -88,13 +90,16 @@ export const handleSubmit = async (
             confirm_password: "",
             username: "",
           });
+          setLoader(false);
           message.success(response.data.message);
           router.push(public_routes.login);
         } else {
+          setLoader(false);
           message.error(response.data.message);
         }
       })
       .catch((error) => {
+        setLoader(false);
         message.error(error.response.data.message);
       });
   } else {
@@ -153,9 +158,18 @@ export const handleKeyDown = (
   setState,
   errorState,
   setErrorState,
-  router
+  router,
+  setLoader
 ) => {
   if (event.key === "Enter" || event.key === "enter") {
-    handleSubmit(event, state, setState, errorState, setErrorState, router);
+    handleSubmit(
+      event,
+      state,
+      setState,
+      errorState,
+      setErrorState,
+      router,
+      setLoader
+    );
   }
 };

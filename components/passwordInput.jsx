@@ -3,7 +3,9 @@ import React, { useState } from "react";
 
 const PasswordInput = (props) => {
   const [isVisible, setIsVisible] = useState(false);
-  const isError = props.error ? "border-red-500 hover:border-red-700" : "border-gray-300 hover:border-gray-700";
+  const isError = props.error
+    ? "border-red-500 hover:border-red-700"
+    : "border-gray-300 hover:border-gray-700";
   const labelClassName = props.isRequired
     ? "block text-sm font-medium "
     : "block text-sm font-medium ";
@@ -29,14 +31,15 @@ const PasswordInput = (props) => {
         />
         <button
           className="absolute top-1/2 right-4 transform -translate-y-1/2"
-          onClick={(e) => {e.preventDefault(); setIsVisible(!isVisible)}}
+          onClick={(e) => {
+            e.preventDefault();
+            setIsVisible(!isVisible);
+          }}
         >
           {isVisible ? <EyeOutlined /> : <EyeInvisibleOutlined />}
         </button>
       </div>
-      {props.error && (
-        <p className="text-red-600 max-w-xs">{props.error}</p>
-      )}
+      {props.error && <p className="text-red-600 max-w-xs">{props.error}</p>}
     </div>
   );
 };

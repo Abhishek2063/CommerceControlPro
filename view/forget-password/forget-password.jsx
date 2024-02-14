@@ -34,7 +34,8 @@ const ForgetPasswordForm = (props) => {
             props.setState,
             props.errorState,
             props.setErrorState,
-            props.router
+            props.router,
+            props.setLoader
           )
         }
       />
@@ -49,7 +50,8 @@ const ForgetPasswordForm = (props) => {
             props.setState,
             props.errorState,
             props.setErrorState,
-            props.router
+            props.router,
+            props.setLoader
           )
         }
       />

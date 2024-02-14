@@ -28,7 +28,8 @@ const ResetPasswordForm = (props) => {
             props.state,
             props.setState,
             props.errorState,
-            props.setErrorState
+            props.setErrorState,
+            
           )
         }
         maxLength="255"
@@ -39,7 +40,8 @@ const ResetPasswordForm = (props) => {
             props.setState,
             props.errorState,
             props.setErrorState,
-            props.router
+            props.router,
+            props.setLoader
           )
         }
         disabled
@@ -72,7 +74,8 @@ const ResetPasswordForm = (props) => {
             props.setState,
             props.errorState,
             props.setErrorState,
-            props.router
+            props.router,
+            props.setLoader
           )
         }
       />
@@ -104,7 +107,8 @@ const ResetPasswordForm = (props) => {
             props.setState,
             props.errorState,
             props.setErrorState,
-            props.router
+            props.router,
+            props.setLoader
           )
         }
       />
@@ -119,7 +123,8 @@ const ResetPasswordForm = (props) => {
             props.setState,
             props.errorState,
             props.setErrorState,
-            props.router
+            props.router,
+            props.setLoader
           )
         }
       />

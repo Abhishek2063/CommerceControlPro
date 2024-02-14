@@ -1,4 +1,5 @@
 "use client";
+import Loader from "@/components/Loader";
 import NavigationButton from "@/components/NavigationButton";
 import { public_routes } from "@/utils/app_routes";
 import ResetPasswordForm from "@/view/reset_password/reset_password_form";
@@ -29,8 +30,10 @@ export default function ResetPassword() {
       }));
     }
   }, []);
-
+  const [isLoader, setLoader] = useState(false);
   return (
+  <>
+    {isLoader && <Loader />}
     <div
       className="flex flex-col justify-center items-center h-screen bg-cover bg-center bg-opacity-50"
       style={{ backgroundImage: "url('/images/background.webp')" }}
@@ -53,6 +56,7 @@ export default function ResetPassword() {
           errorState={resetPasswordError}
           setErrorState={setResetPasswordError}
           router={router}
+          setLoader={setLoader}
         />
         <div className="mt-3 flex items-center justify-between inline-block align-baseline text-sm font-bold">
           Want to go back to login?
@@ -64,5 +68,6 @@ export default function ResetPassword() {
         </div>
       </div>
     </div>
+  </>
   );
 }
